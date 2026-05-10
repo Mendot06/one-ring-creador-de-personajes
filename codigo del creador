@@ -1,0 +1,1651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The One Ring — Character Creator</title>
+<link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=IM+Fell+English+SC&family=Cinzel:wght@400;600;700&family=Raleway:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #c9a84c;
+    --gold-light: #e8c97a;
+    --gold-dark: #8a6a1e;
+    --parchment: #f7f0dc;
+    --parchment-dark: #e8d9b0;
+    --ink: #1a0f00;
+    --ink-light: #3d2b0a;
+    --shadow: #0a0500;
+    --red: #7a1c1c;
+    --teal: #1a4a4a;
+    --bg: #0d0800;
+    --bg2: #150d00;
+    --border: rgba(201,168,76,0.25);
+    --border-strong: rgba(201,168,76,0.6);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--parchment);
+    font-family: 'IM Fell English', Georgia, serif;
+    min-height: 100vh;
+    background-image:
+      radial-gradient(ellipse at 20% 0%, rgba(201,168,76,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 100%, rgba(201,168,76,0.05) 0%, transparent 60%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  }
+
+  /* HEADER */
+  .site-header {
+    text-align: center;
+    padding: 3rem 1rem 2rem;
+    position: relative;
+    border-bottom: 1px solid var(--border);
+  }
+  .site-header::after {
+    content: '';
+    display: block;
+    width: 200px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 1.5rem auto 0;
+  }
+  .header-eyebrow {
+    font-family: 'Raleway', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+    opacity: 0.8;
+  }
+  .header-title {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(28px, 5vw, 48px);
+    font-weight: 700;
+    color: var(--gold-light);
+    letter-spacing: 0.05em;
+    text-shadow: 0 0 40px rgba(201,168,76,0.3);
+    line-height: 1.1;
+  }
+  .header-sub {
+    font-family: 'IM Fell English', serif;
+    font-style: italic;
+    font-size: 15px;
+    color: rgba(247,240,220,0.5);
+    margin-top: 0.5rem;
+  }
+  .ring-ornament {
+    font-size: 28px;
+    display: block;
+    margin: 0.5rem auto;
+    opacity: 0.6;
+    color: var(--gold);
+  }
+
+  /* LANG SWITCHER */
+  .lang-bar {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    max-width: 860px;
+    margin: 1rem auto 0;
+    padding: 0 1.5rem;
+  }
+  .lang-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: rgba(247,240,220,0.5);
+    font-family: 'Raleway', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 5px 14px;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s;
+  }
+  .lang-btn.active, .lang-btn:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+    background: rgba(201,168,76,0.08);
+  }
+
+  /* MAIN LAYOUT */
+  .main {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  /* PROGRESS */
+  .progress-track {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 2.5rem;
+  }
+  .progress-step {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    position: relative;
+  }
+  .progress-step::before {
+    content: '';
+    position: absolute;
+    top: 14px;
+    left: calc(-50% + 14px);
+    right: calc(50% + 14px);
+    height: 1px;
+    background: var(--border);
+    transition: background 0.3s;
+  }
+  .progress-step:first-child::before { display: none; }
+  .progress-step.done::before { background: var(--gold-dark); }
+  .progress-dot {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    color: rgba(247,240,220,0.3);
+    background: var(--bg2);
+    transition: all 0.3s;
+    position: relative;
+    z-index: 1;
+  }
+  .progress-step.done .progress-dot {
+    border-color: var(--gold-dark);
+    background: rgba(138,106,30,0.3);
+    color: var(--gold);
+  }
+  .progress-step.current .progress-dot {
+    border-color: var(--gold);
+    background: rgba(201,168,76,0.15);
+    color: var(--gold-light);
+    box-shadow: 0 0 12px rgba(201,168,76,0.3);
+  }
+  .progress-label {
+    font-family: 'Raleway', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(247,240,220,0.3);
+    transition: color 0.3s;
+  }
+  .progress-step.current .progress-label { color: var(--gold); }
+  .progress-step.done .progress-label { color: var(--gold-dark); }
+
+  /* STEPS */
+  .step { display: none; animation: fadeIn 0.3s ease; }
+  .step.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  .step-eyebrow {
+    font-family: 'Raleway', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+    opacity: 0.7;
+  }
+  .step-title {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(20px, 3vw, 28px);
+    color: var(--gold-light);
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+  }
+  .step-sub {
+    font-family: 'IM Fell English', serif;
+    font-style: italic;
+    font-size: 15px;
+    color: rgba(247,240,220,0.55);
+    margin-bottom: 2rem;
+    line-height: 1.6;
+    max-width: 640px;
+  }
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 2rem 0;
+  }
+  .divider-ornament {
+    text-align: center;
+    margin: 1.5rem 0;
+    color: var(--gold-dark);
+    font-size: 16px;
+    opacity: 0.5;
+    position: relative;
+  }
+  .divider-ornament::before,
+  .divider-ornament::after {
+    content: '';
+    display: inline-block;
+    width: 80px;
+    height: 1px;
+    background: var(--border);
+    vertical-align: middle;
+    margin: 0 12px;
+  }
+
+  /* CULTURE CARDS */
+  .culture-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 12px;
+    margin-bottom: 2rem;
+  }
+  .culture-card {
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1.25rem 1.25rem 1rem;
+    cursor: pointer;
+    background: rgba(255,255,255,0.02);
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .culture-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(201,168,76,0.06) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .culture-card:hover { border-color: rgba(201,168,76,0.4); }
+  .culture-card:hover::before { opacity: 1; }
+  .culture-card.selected {
+    border-color: var(--gold);
+    background: rgba(201,168,76,0.08);
+    box-shadow: 0 0 20px rgba(201,168,76,0.1);
+  }
+  .culture-card.selected::before { opacity: 1; }
+  .card-name {
+    font-family: 'Cinzel', serif;
+    font-size: 14px;
+    color: var(--gold-light);
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+  .card-sub {
+    font-family: 'IM Fell English', serif;
+    font-style: italic;
+    font-size: 13px;
+    color: rgba(247,240,220,0.5);
+    margin-bottom: 10px;
+    line-height: 1.4;
+  }
+  .card-tag {
+    display: inline-block;
+    font-family: 'Raleway', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold-dark);
+    border: 1px solid rgba(138,106,30,0.4);
+    border-radius: 2px;
+    padding: 2px 8px;
+  }
+  .card-check {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--gold);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    color: var(--ink);
+    font-size: 11px;
+  }
+  .culture-card.selected .card-check { display: flex; }
+
+  /* ATTR TABLE */
+  .section-label {
+    font-family: 'Raleway', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    text-transform: uppercase;
+    opacity: 0.7;
+    margin-bottom: 1rem;
+  }
+  .attr-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1.5rem;
+    font-size: 14px;
+  }
+  .attr-table th {
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    color: var(--gold-dark);
+    text-align: center;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+    font-weight: 600;
+    letter-spacing: 0.05em;
+  }
+  .attr-table td {
+    text-align: center;
+    padding: 10px 12px;
+    border-bottom: 1px solid rgba(201,168,76,0.08);
+    cursor: pointer;
+    color: rgba(247,240,220,0.7);
+    font-family: 'IM Fell English', serif;
+    transition: background 0.15s;
+  }
+  .attr-table tr:hover td { background: rgba(201,168,76,0.05); }
+  .attr-table tr.selected-row td {
+    background: rgba(201,168,76,0.1);
+    color: var(--parchment);
+    font-weight: bold;
+  }
+  .attr-table tr.selected-row td:first-child { color: var(--gold); }
+  .attr-val { font-size: 18px; color: var(--gold-light); font-weight: bold; }
+  .attr-table tr.selected-row .attr-val { color: var(--gold); }
+
+  /* DERIVED STATS */
+  .derived-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+  }
+  .derived-card {
+    flex: 1;
+    min-width: 100px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1rem;
+    text-align: center;
+    background: rgba(255,255,255,0.02);
+  }
+  .derived-label {
+    font-family: 'Raleway', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold-dark);
+    margin-bottom: 6px;
+  }
+  .derived-value {
+    font-family: 'Cinzel', serif;
+    font-size: 28px;
+    color: var(--gold-light);
+    font-weight: 600;
+  }
+  .derived-formula {
+    font-family: 'Raleway', sans-serif;
+    font-size: 10px;
+    color: rgba(247,240,220,0.3);
+    margin-top: 4px;
+  }
+
+  /* FAVOURED CHOOSER */
+  .favoured-chooser { margin-bottom: 1.5rem; }
+  .fav-label {
+    font-family: 'IM Fell English', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: rgba(247,240,220,0.6);
+    margin-bottom: 10px;
+  }
+  .fav-options { display: flex; gap: 8px; flex-wrap: wrap; }
+  .fav-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: rgba(247,240,220,0.6);
+    font-family: 'Cinzel', serif;
+    font-size: 12px;
+    padding: 6px 16px;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s;
+    letter-spacing: 0.05em;
+  }
+  .fav-btn:hover { border-color: rgba(201,168,76,0.5); color: var(--gold); }
+  .fav-btn.selected {
+    border-color: var(--gold);
+    background: rgba(201,168,76,0.12);
+    color: var(--gold-light);
+  }
+
+  /* BLESSING BOX */
+  .blessing-box {
+    border: 1px solid rgba(201,168,76,0.3);
+    border-radius: 4px;
+    padding: 1rem 1.25rem;
+    background: rgba(201,168,76,0.05);
+    margin-bottom: 1.5rem;
+  }
+  .blessing-title {
+    font-family: 'Cinzel', serif;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    color: var(--gold);
+    margin-bottom: 6px;
+  }
+  .blessing-desc {
+    font-family: 'IM Fell English', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: rgba(247,240,220,0.65);
+    line-height: 1.5;
+  }
+
+  /* CALLINGS */
+  .calling-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 12px;
+    margin-bottom: 2rem;
+  }
+  .calling-card {
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1.25rem;
+    cursor: pointer;
+    background: rgba(255,255,255,0.02);
+    transition: all 0.2s;
+    position: relative;
+  }
+  .calling-card:hover { border-color: rgba(201,168,76,0.4); background: rgba(201,168,76,0.04); }
+  .calling-card.selected { border-color: var(--gold); background: rgba(201,168,76,0.08); }
+  .calling-name {
+    font-family: 'Cinzel', serif;
+    font-size: 15px;
+    color: var(--gold-light);
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .calling-favs {
+    font-family: 'Raleway', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    color: rgba(201,168,76,0.7);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+  }
+  .calling-shadow-row {
+    font-family: 'IM Fell English', serif;
+    font-style: italic;
+    font-size: 12px;
+    color: rgba(180,60,60,0.7);
+  }
+  .calling-shadow-label { color: rgba(247,240,220,0.3); }
+
+  /* CALLING FAV CHOOSER */
+  .calling-fav-section {
+    margin-top: 0.75rem;
+    padding: 0.75rem;
+    background: rgba(0,0,0,0.3);
+    border-radius: 2px;
+    border: 1px solid rgba(201,168,76,0.15);
+  }
+  .cf-label {
+    font-family: 'IM Fell English', serif;
+    font-style: italic;
+    font-size: 13px;
+    color: rgba(247,240,220,0.5);
+    margin-bottom: 8px;
+  }
+  .cf-options { display: flex; gap: 6px; flex-wrap: wrap; }
+  .cf-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: rgba(247,240,220,0.5);
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    padding: 4px 12px;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s;
+  }
+  .cf-btn:hover { border-color: rgba(201,168,76,0.4); color: var(--gold); }
+  .cf-btn.selected { border-color: var(--gold); background: rgba(201,168,76,0.12); color: var(--gold-light); }
+
+  /* XP */
+  .xp-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    margin-bottom: 1rem;
+    background: rgba(255,255,255,0.02);
+  }
+  .xp-pool-label { font-family: 'Raleway', sans-serif; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(247,240,220,0.4); }
+  .xp-left { font-family: 'Cinzel', serif; font-size: 24px; color: var(--gold-light); font-weight: 600; }
+  .xp-tabs { display: flex; gap: 6px; margin-bottom: 1rem; }
+  .xp-tab {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: rgba(247,240,220,0.4);
+    font-family: 'Raleway', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 6px 16px;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s;
+  }
+  .xp-tab.active, .xp-tab:hover { border-color: var(--gold); color: var(--gold); background: rgba(201,168,76,0.07); }
+  .xp-skill-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(201,168,76,0.07);
+  }
+  .xp-skill-name {
+    flex: 1;
+    font-family: 'Cinzel', serif;
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    color: rgba(247,240,220,0.55);
+  }
+  .xp-skill-name.is-fav { color: var(--gold); }
+  .rank-btns { display: flex; align-items: center; gap: 4px; }
+  .rank-btn {
+    width: 26px;
+    height: 26px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: rgba(247,240,220,0.5);
+    cursor: pointer;
+    border-radius: 2px;
+    font-size: 16px;
+    line-height: 1;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .rank-btn:hover:not(:disabled) { border-color: var(--gold); color: var(--gold); }
+  .rank-btn:disabled { opacity: 0.2; cursor: not-allowed; }
+  .rank-display {
+    width: 24px;
+    text-align: center;
+    font-family: 'Cinzel', serif;
+    font-size: 15px;
+    color: var(--parchment);
+  }
+
+  /* NAME & FEATURES */
+  .field-label {
+    font-family: 'Raleway', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold-dark);
+    margin-bottom: 8px;
+  }
+  .field-input {
+    width: 100%;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 12px 16px;
+    font-family: 'IM Fell English', serif;
+    font-size: 18px;
+    color: var(--parchment);
+    outline: none;
+    transition: border-color 0.2s;
+    margin-bottom: 2rem;
+  }
+  .field-input:focus { border-color: var(--gold); box-shadow: 0 0 0 1px rgba(201,168,76,0.2); }
+  .feature-pills-container { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 2rem; }
+  .feature-pill {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: rgba(247,240,220,0.5);
+    font-family: 'IM Fell English', serif;
+    font-style: italic;
+    font-size: 14px;
+    padding: 6px 14px;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s;
+  }
+  .feature-pill:hover { border-color: rgba(201,168,76,0.4); color: rgba(247,240,220,0.8); }
+  .feature-pill.selected { border-color: var(--gold); background: rgba(201,168,76,0.1); color: var(--gold-light); }
+  .feature-pill.calling-feature { border-color: rgba(138,106,30,0.5); background: rgba(138,106,30,0.08); color: var(--gold-dark); cursor: default; }
+
+  /* NAV */
+  .nav-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+  .nav-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: rgba(247,240,220,0.5);
+    font-family: 'Cinzel', serif;
+    font-size: 13px;
+    letter-spacing: 0.05em;
+    padding: 10px 24px;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: all 0.2s;
+  }
+  .nav-btn:hover:not(:disabled) { border-color: rgba(201,168,76,0.5); color: rgba(247,240,220,0.8); }
+  .nav-btn:disabled { opacity: 0.25; cursor: not-allowed; }
+  .nav-btn.primary {
+    border-color: var(--gold);
+    color: var(--gold-light);
+    background: rgba(201,168,76,0.08);
+  }
+  .nav-btn.primary:hover:not(:disabled) { background: rgba(201,168,76,0.18); box-shadow: 0 0 16px rgba(201,168,76,0.15); }
+  .nav-btn.share-btn {
+    display: flex; align-items: center; gap: 6px;
+  }
+
+  /* CHARACTER SHEET */
+  .sheet-wrapper {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    background: rgba(255,255,255,0.01);
+  }
+  .sheet-hero-header {
+    padding: 2rem;
+    background: linear-gradient(135deg, rgba(201,168,76,0.1) 0%, rgba(0,0,0,0.3) 100%);
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+  .sheet-hero-header::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+  .sheet-hero-name {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(22px, 3vw, 32px);
+    color: var(--gold-light);
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .sheet-hero-sub {
+    font-family: 'IM Fell English', serif;
+    font-style: italic;
+    font-size: 15px;
+    color: rgba(247,240,220,0.45);
+  }
+  .sheet-valour-wisdom {
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+    display: flex;
+    gap: 12px;
+  }
+  .vw-badge {
+    text-align: center;
+    border: 1px solid rgba(201,168,76,0.3);
+    border-radius: 3px;
+    padding: 8px 14px;
+    background: rgba(0,0,0,0.3);
+  }
+  .vw-label { font-family: 'Raleway', sans-serif; font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold-dark); margin-bottom: 4px; }
+  .vw-val { font-family: 'Cinzel', serif; font-size: 20px; color: var(--gold-light); font-weight: 600; }
+  .sheet-body { padding: 1.5rem 2rem; }
+  .sheet-section { margin-bottom: 1.5rem; }
+  .sheet-section-title {
+    font-family: 'Raleway', sans-serif;
+    font-size: 9px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold-dark);
+    opacity: 0.8;
+    margin-bottom: 1rem;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+  .attr-trio { display: flex; gap: 10px; }
+  .attr-block {
+    flex: 1;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1rem;
+    text-align: center;
+    background: rgba(255,255,255,0.02);
+  }
+  .ab-label { font-family: 'Raleway', sans-serif; font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold-dark); margin-bottom: 4px; }
+  .ab-val { font-family: 'Cinzel', serif; font-size: 28px; color: var(--gold-light); font-weight: 700; line-height: 1; }
+  .ab-tn { font-family: 'Raleway', sans-serif; font-size: 10px; color: rgba(247,240,220,0.3); margin-top: 4px; letter-spacing: 0.08em; }
+  .derived-trio { display: flex; gap: 10px; flex-wrap: wrap; }
+  .der-block {
+    flex: 1;
+    min-width: 80px;
+    border: 1px solid rgba(201,168,76,0.15);
+    border-radius: 4px;
+    padding: 0.75rem;
+    text-align: center;
+    background: rgba(201,168,76,0.04);
+  }
+  .db-label { font-family: 'Raleway', sans-serif; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(247,240,220,0.35); margin-bottom: 4px; }
+  .db-val { font-family: 'Cinzel', serif; font-size: 22px; color: var(--gold-light); font-weight: 600; }
+  .sheet-skills-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
+  .ss-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 10px;
+    border-radius: 3px;
+    font-size: 13px;
+    font-family: 'Cinzel', serif;
+  }
+  .ss-row.fav { background: rgba(201,168,76,0.08); border: 1px solid rgba(201,168,76,0.2); }
+  .ss-name { color: rgba(247,240,220,0.45); font-size: 11px; letter-spacing: 0.04em; }
+  .ss-row.fav .ss-name { color: var(--gold-dark); }
+  .ss-val { color: var(--parchment); font-weight: 600; }
+  .ss-row.fav .ss-val { color: var(--gold-light); }
+  .combat-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .combat-pill {
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 5px 14px;
+    font-family: 'Cinzel', serif;
+    font-size: 12px;
+    color: rgba(247,240,220,0.5);
+  }
+  .combat-pill span { color: var(--gold-light); font-weight: 600; }
+  .sheet-features { display: flex; gap: 8px; flex-wrap: wrap; }
+  .sh-feature {
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 4px 12px;
+    font-family: 'IM Fell English', serif;
+    font-style: italic;
+    font-size: 13px;
+    color: rgba(247,240,220,0.55);
+  }
+  .sh-feature.calling-feat { border-color: rgba(201,168,76,0.3); color: var(--gold-dark); }
+  .sh-blessing {
+    background: rgba(201,168,76,0.06);
+    border: 1px solid rgba(201,168,76,0.2);
+    border-radius: 4px;
+    padding: 1rem 1.25rem;
+    font-family: 'IM Fell English', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: rgba(247,240,220,0.6);
+    line-height: 1.6;
+  }
+  .sh-blessing strong { color: var(--gold); font-style: normal; font-family: 'Cinzel', serif; font-size: 12px; letter-spacing: 0.06em; display: block; margin-bottom: 6px; font-weight: 600; }
+  .sh-shadow {
+    background: rgba(100,20,20,0.15);
+    border: 1px solid rgba(180,60,60,0.25);
+    border-radius: 4px;
+    padding: 1rem 1.25rem;
+    font-family: 'IM Fell English', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: rgba(200,100,100,0.65);
+    line-height: 1.6;
+  }
+  .sh-shadow strong { color: rgba(200,100,100,0.9); font-style: normal; font-family: 'Cinzel', serif; font-size: 12px; letter-spacing: 0.06em; display: block; margin-bottom: 6px; font-weight: 600; }
+
+  .restart-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: rgba(247,240,220,0.35);
+    font-family: 'Raleway', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 8px 20px;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s;
+  }
+  .restart-btn:hover { color: rgba(247,240,220,0.7); border-color: rgba(247,240,220,0.3); }
+
+  /* FOOTER */
+  .site-footer {
+    text-align: center;
+    padding: 2rem 1rem;
+    border-top: 1px solid var(--border);
+    font-family: 'Raleway', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: rgba(247,240,220,0.2);
+  }
+
+  @media (max-width: 580px) {
+    .culture-grid { grid-template-columns: 1fr; }
+    .calling-grid { grid-template-columns: 1fr; }
+    .sheet-skills-grid { grid-template-columns: 1fr; }
+    .sheet-valour-wisdom { position: static; margin-top: 1rem; }
+    .attr-trio { flex-direction: column; }
+    .vw-badge { flex: 1; }
+    .nav-row.step5-nav { flex-direction: column; gap: 15px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-eyebrow">Roleplaying in the World of the Lord of the Rings</div>
+  <div class="ring-ornament">◆ ◇ ◆</div>
+  <h1 class="header-title">The One Ring</h1>
+  <div class="header-sub">Character Creator — 2nd Edition</div>
+</header>
+
+<div class="lang-bar">
+  <button class="lang-btn active" onclick="setLang('en')">English</button>
+  <button class="lang-btn" onclick="setLang('es')">Español</button>
+</div>
+
+<main class="main">
+  <div class="progress-track" id="progressTrack"></div>
+
+  <!-- STEP 1 -->
+  <section class="step active" id="step1">
+    <div class="step-eyebrow" id="s1eyebrow">Step 1 of 5</div>
+    <h2 class="step-title" id="s1title">Choose your Heroic Culture</h2>
+    <p class="step-sub" id="s1sub">Your culture defines who you are in Middle-earth — your abilities, blessings, and outlook on life.</p>
+
+    <div class="culture-grid" id="cultureGrid"></div>
+
+    <div id="attrSection" style="display:none">
+      <div class="divider-ornament">◆</div>
+      <div class="section-label" id="s1attrlabel">Attributes</div>
+      <table class="attr-table" id="attrTable"></table>
+      <div class="favoured-chooser" id="favouredChooser">
+        <div class="fav-label" id="s1favlabel">Choose one Favoured Skill from the underlined options:</div>
+        <div class="fav-options" id="favouredOptions"></div>
+      </div>
+      <div class="derived-row" id="derivedRow"></div>
+      <div id="blessingBox"></div>
+    </div>
+
+    <div class="nav-row">
+      <div></div>
+      <button class="nav-btn primary" id="btn1next" onclick="goStep(2)" disabled>Continue →</button>
+    </div>
+  </section>
+
+  <!-- STEP 2 -->
+  <section class="step" id="step2">
+    <div class="step-eyebrow" id="s2eyebrow">Step 2 of 5</div>
+    <h2 class="step-title" id="s2title">Answer the Call to Adventure</h2>
+    <p class="step-sub" id="s2sub">A Calling is what motivates your hero — not a profession, but the drive that sets them on the road.</p>
+    <div class="calling-grid" id="callingGrid"></div>
+    <div class="nav-row">
+      <button class="nav-btn" onclick="goStep(1)">← Back</button>
+      <button class="nav-btn primary" id="btn2next" onclick="goStep(3)" disabled>Continue →</button>
+    </div>
+  </section>
+
+  <!-- STEP 3 -->
+  <section class="step" id="step3">
+    <div class="step-eyebrow" id="s3eyebrow">Step 3 of 5</div>
+    <h2 class="step-title" id="s3title">Previous Experience</h2>
+    <p class="step-sub" id="s3sub">Spend 10 points to raise Skills and Combat Proficiencies. Skill costs: 0→1: 1pt · 1→2: 2pt · 2→3: 3pt · 3→4: 5pt. Combat costs: 0→1: 2pt · 1→2: 4pt · 2→3: 6pt.</p>
+    <div id="xpSection"></div>
+    <div class="nav-row">
+      <button class="nav-btn" onclick="goStep(2)">← Back</button>
+      <button class="nav-btn primary" onclick="goStep(4)">Continue →</button>
+    </div>
+  </section>
+
+  <!-- STEP 4 -->
+  <section class="step" id="step4">
+    <div class="step-eyebrow" id="s4eyebrow">Step 4 of 5</div>
+    <h2 class="step-title" id="s4title">Name your Hero</h2>
+    <p class="step-sub" id="s4sub">Choose a name and two Distinctive Features that define your hero's personality.</p>
+    <div class="field-label" id="s4namelabel">Hero Name</div>
+    <input class="field-input" type="text" id="heroNameInput" oninput="onNameInput()" placeholder="e.g. Lifstan son of Leiknir">
+    <div class="field-label" id="s4featlabel">Distinctive Features — choose 2</div>
+    <div class="feature-pills-container" id="featurePills"></div>
+    <div class="nav-row">
+      <button class="nav-btn" onclick="goStep(3)">← Back</button>
+      <button class="nav-btn primary" id="btn4next" onclick="goStep(5)" disabled>View Character Sheet →</button>
+    </div>
+  </section>
+
+  <!-- STEP 5 -->
+  <section class="step" id="step5">
+    <div class="step-eyebrow" id="s5eyebrow">Step 5 of 5</div>
+    <h2 class="step-title" id="s5title">Your Hero is Ready</h2>
+    <p class="step-sub" id="s5sub">Your character sheet for The One Ring — 2nd Edition.</p>
+    <div id="characterSheet"></div>
+    
+    <div class="nav-row step5-nav" style="flex-wrap: wrap; gap: 8px;">
+      <button class="nav-btn" onclick="goStep(4)">← Back</button>
+      <div style="display:flex; gap:8px; flex:1; justify-content:center;">
+        <button class="nav-btn share-btn" style="border-color: #25D366; color: #25D366;" id="btnWa" onclick="shareWa()">
+          <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z"/></svg>
+          WhatsApp
+        </button>
+        <button class="nav-btn share-btn" style="border-color: #5865F2; color: #5865F2;" id="btnDi" onclick="shareDi()">
+          <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M13.545 2.907a13.227 13.227 0 0 0-3.257-1.011.05.05 0 0 0-.052.025c-.141.25-.297.577-.406.833a12.19 12.19 0 0 0-3.658 0 8.258 8.258 0 0 0-.412-.833.051.051 0 0 0-.052-.025c-1.125.194-2.22.534-3.257 1.011a.041.041 0 0 0-.021.018C.356 6.024-.213 9.047.066 12.032c.001.014.01.028.021.037a13.276 13.276 0 0 0 3.995 2.02.05.05 0 0 0 .056-.019c.308-.42.582-.863.818-1.329a.05.05 0 0 0-.01-.059.051.051 0 0 0-.018-.011 8.875 8.875 0 0 1-1.248-.595.05.05 0 0 1-.02-.066.051.051 0 0 1 .015-.019c.084-.063.168-.129.248-.195a.05.05 0 0 1 .051-.007c2.619 1.196 5.454 1.196 8.041 0a.052.052 0 0 1 .053.007c.08.066.164.132.248.195a.051.051 0 0 1-.004.085 8.254 8.254 0 0 1-1.249.594.05.05 0 0 0-.03.03.052.052 0 0 0 .003.041c.24.465.515.909.817 1.329a.05.05 0 0 0 .056.019 13.235 13.235 0 0 0 4.001-2.02.049.049 0 0 0 .021-.037c.334-3.451-.559-6.449-2.366-9.106a.034.034 0 0 0-.02-.019zM5.89 8.631c-.598 0-1.085-.51-1.085-1.14 0-.631.48-1.14 1.085-1.14s1.09.515 1.085 1.14c0 .631-.48 1.14-1.085 1.14zm4.22 0c-.598 0-1.085-.51-1.085-1.14 0-.631.48-1.14 1.085-1.14s1.09.515 1.085 1.14c0 .631-.48 1.14-1.085 1.14z"/></svg>
+          Discord
+        </button>
+      </div>
+      <button class="restart-btn" id="btnRestart" onclick="restart()">New Character</button>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  The One Ring™ is a trademark of Middle-earth Enterprises, LLC · This tool is a fan-made character creator
+</footer>
+
+<script>
+var lang = 'en';
+var currentStep = 1;
+var currentXPTab = 'skills';
+
+var state = {
+  culture: null, attrRow: null, favouredSkill: null,
+  calling: null, callingFavs: [],
+  xpSkills: {}, xpCombat: {},
+  heroName: '', features: []
+};
+
+var STRINGS = {
+  en: {
+    steps: ['Culture','Calling','Experience','Name','Sheet'],
+    s1ey:'Step 1 of 5', s1t:'Choose your Heroic Culture', s1s:'Your culture defines who you are in Middle-earth — your abilities, blessings, and outlook on life.',
+    s2ey:'Step 2 of 5', s2t:'Answer the Call to Adventure', s2s:'A Calling is what motivates your hero — not a profession, but the drive that sets them on the road.',
+    s3ey:'Step 3 of 5', s3t:'Previous Experience', s3s:'Spend 10 points to raise Skills and Combat Proficiencies. Skill costs: 0→1: 1pt · 1→2: 2pt · 2→3: 3pt · 3→4: 5pt. Combat costs: 0→1: 2pt · 1→2: 4pt · 2→3: 6pt.',
+    s4ey:'Step 4 of 5', s4t:'Name your Hero', s4s:'Choose a name and two Distinctive Features that define your hero\'s personality.',
+    s5ey:'Step 5 of 5', s5t:'Your Hero is Ready', s5s:'Your character sheet for The One Ring — 2nd Edition.',
+    attrlabel:'Attributes', favlabel:'Choose one Favoured Skill from the underlined options:',
+    namelabel:'Hero Name', featlabel:'Distinctive Features — choose 2',
+    cont:'Continue →', back:'← Back', restart:'New Character', viewSheet:'View Character Sheet →',
+    chooseCallingFavs:'Choose 2 Favoured Skills from your Calling:',
+    xpLeft:'XP Remaining', skills:'Skills', combat:'Combat Proficiencies',
+    roll:'Roll', strength:'STRENGTH', heart:'HEART', wits:'WITS', tn:'TN',
+    endurance:'ENDURANCE', hope:'HOPE', parry:'PARRY', standard:'Standard of Living',
+    blessing:'Cultural Blessing', shadowPath:'Shadow Path', calling:'Calling',
+    features:'Distinctive Features', attrs:'Attributes', derived:'Derived Stats',
+    valour:'VALOUR', wisdom:'WISDOM', xpPool:'XP Pool', favoured: 'Favoured',
+    shareWa: 'WhatsApp', shareDi: 'Discord', copied: 'Character summary copied to clipboard! Paste it in your Discord channel.'
+  },
+  es: {
+    steps: ['Cultura','Vocación','Experiencia','Nombre','Hoja'],
+    s1ey:'Paso 1 de 5', s1t:'Elige tu Cultura Heroica', s1s:'Tu cultura define quién eres en la Tierra Media — tus habilidades, bendiciones y perspectiva de vida.',
+    s2ey:'Paso 2 de 5', s2t:'Responde al Llamado a la Aventura', s2s:'Una Vocación es lo que motiva a tu héroe — no una profesión, sino el impulso que lo lleva al camino.',
+    s3ey:'Paso 3 de 5', s3t:'Experiencia Previa', s3s:'Gasta 10 puntos para mejorar Habilidades y Proezas de Combate. Costos Habilidad: 0→1: 1pt · 1→2: 2pt · 2→3: 3pt · 3→4: 5pt. Combate: 0→1: 2pt · 1→2: 4pt · 2→3: 6pt.',
+    s4ey:'Paso 4 de 5', s4t:'Nombra a tu Héroe', s4s:'Elige un nombre y dos Rasgos Distintivos que definen la personalidad de tu héroe.',
+    s5ey:'Paso 5 de 5', s5t:'Tu Héroe está Listo', s5s:'Tu hoja de personaje para El Anillo Único — 2ª Edición.',
+    attrlabel:'Atributos', favlabel:'Elige una Habilidad Favorecida de las opciones subrayadas:',
+    namelabel:'Nombre del Héroe', featlabel:'Rasgos Distintivos — elige 2',
+    cont:'Continuar →', back:'← Atrás', restart:'Nuevo Personaje', viewSheet:'Ver Hoja de Personaje →',
+    chooseCallingFavs:'Elige 2 Habilidades Favorecidas de tu Vocación:',
+    xpLeft:'XP Restantes', skills:'Habilidades', combat:'Proezas de Combate',
+    roll:'Tirada', strength:'FUERZA', heart:'CORAZÓN', wits:'INGENIO', tn:'ND',
+    endurance:'RESISTENCIA', hope:'ESPERANZA', parry:'PARADA', standard:'Nivel de Vida',
+    blessing:'Bendición Cultural', shadowPath:'Senda de la Sombra', calling:'Vocación',
+    features:'Rasgos Distintivos', attrs:'Atributos', derived:'Estadísticas Derivadas',
+    valour:'VALOR', wisdom:'SABIDURÍA', xpPool:'Reserva de XP', favoured: 'Favorecida',
+    shareWa: 'WhatsApp', shareDi: 'Discord', copied: '¡Resumen del personaje copiado al portapapeles! Pegalo en tu canal de Discord.'
+  }
+};
+
+var CULTURES = {
+  bardings: {
+    name:'Bardings', sub:'Men of Dale, brave and prosperous', standard:'Prosperous', standardEs:'Próspero',
+    blessing:'STOUT-HEARTED', blessingDesc:'Your VALOUR rolls are Favoured.',
+    blessingDescEs:'Tus tiradas de VALOR son Favorecidas.',
+    attrSets:[{s:6,h:4,w:5},{s:5,h:5,w:4},{s:6,h:3,w:5},{s:6,h:4,w:4},{s:5,h:4,w:5},{s:6,h:2,w:6}],
+    endB:20, hopB:8, parB:12,
+    skills:{AWE:1,ENHEARTEN:2,PERSUADE:3,ATHLETICS:1,TRAVEL:1,STEALTH:0,AWARENESS:0,INSIGHT:2,SCAN:1,HUNTING:2,HEALING:0,EXPLORE:1,SONG:1,COURTESY:2,RIDDLE:0,CRAFT:1,BATTLE:2,LORE:1},
+    favChoices:['ENHEARTEN','COURTESY'],
+    mainCombat:['Bows','Swords'], mainRank:2, extraRank:1,
+    features:['Bold','Eager','Fair','Fierce','Generous','Proud','Tall','Wilful']
+  },
+  dwarves: {
+    name:"Dwarves of Durin's Folk", sub:'Ancient, proud, resilient', standard:'Prosperous', standardEs:'Próspero',
+    blessing:'REDOUBTABLE', blessingDesc:'You halve the Load rating of any armour you wear (rounding up).',
+    blessingDescEs:'Reduces a la mitad el Valor de Carga de cualquier armadura que uses (redondeando hacia arriba).',
+    attrSets:[{s:7,h:2,w:5},{s:7,h:3,w:4},{s:6,h:3,w:5},{s:6,h:4,w:4},{s:5,h:4,w:5},{s:6,h:2,w:6}],
+    endB:22, hopB:8, parB:10,
+    skills:{AWE:2,ENHEARTEN:0,PERSUADE:0,ATHLETICS:1,TRAVEL:3,STEALTH:0,AWARENESS:0,INSIGHT:0,SCAN:3,HUNTING:0,HEALING:0,EXPLORE:2,SONG:1,COURTESY:1,RIDDLE:2,CRAFT:2,BATTLE:1,LORE:1},
+    favChoices:['TRAVEL','CRAFT'],
+    mainCombat:['Axes','Swords'], mainRank:2, extraRank:1,
+    features:['Cunning','Fierce','Lordly','Proud','Secretive','Stern','Wary','Wilful']
+  },
+  elves: {
+    name:'Elves of Lindon', sub:'Ancient firstborn, wise and fair', standard:'Frugal', standardEs:'Frugal',
+    blessing:'ELVEN-SKILL', blessingDesc:'Spend 1 Hope to achieve a Magical success on a Skill roll when not Miserable.',
+    blessingDescEs:'Gasta 1 de Esperanza para lograr un éxito Mágico en una tirada de Habilidad cuando no estés Miserable.',
+    attrSets:[{s:5,h:2,w:7},{s:4,h:3,w:7},{s:5,h:3,w:6},{s:4,h:4,w:6},{s:5,h:4,w:5},{s:6,h:2,w:6}],
+    endB:20, hopB:8, parB:12,
+    skills:{AWE:2,ENHEARTEN:1,PERSUADE:0,ATHLETICS:2,TRAVEL:0,STEALTH:3,AWARENESS:2,INSIGHT:0,SCAN:0,HUNTING:0,HEALING:1,EXPLORE:0,SONG:2,COURTESY:0,RIDDLE:0,CRAFT:2,BATTLE:0,LORE:3},
+    favChoices:['AWARENESS','SONG'],
+    mainCombat:['Bows','Spears'], mainRank:2, extraRank:1,
+    features:['Fair','Keen-eyed','Lordly','Merry','Patient','Subtle','Swift','Wary'],
+    special:'THE LONG DEFEAT: When removing Shadow during the Fellowship Phase, you can only remove a maximum of 1 point.'
+  },
+  hobbits: {
+    name:'Hobbits of the Shire', sub:'Small, merry, surprisingly tough', standard:'Common', standardEs:'Común',
+    blessing:'HOBBIT-SENSE', blessingDesc:'Your WISDOM rolls are Favoured, and you gain (1d) on Shadow Tests made to resist Greed.',
+    blessingDescEs:'Tus tiradas de SABIDURÍA son Favorecidas, y ganas (1d) en Pruebas de Sombra para resistir la Codicia.',
+    attrSets:[{s:3,h:6,w:5},{s:3,h:7,w:4},{s:2,h:7,w:5},{s:4,h:6,w:4},{s:4,h:5,w:5},{s:2,h:6,w:6}],
+    endB:18, hopB:10, parB:12,
+    skills:{AWE:0,ENHEARTEN:0,PERSUADE:2,ATHLETICS:0,TRAVEL:0,STEALTH:3,AWARENESS:2,INSIGHT:2,SCAN:0,HUNTING:0,HEALING:1,EXPLORE:0,SONG:2,COURTESY:2,RIDDLE:3,CRAFT:1,BATTLE:0,LORE:0},
+    favChoices:['STEALTH','RIDDLE'],
+    mainCombat:['Bows','Swords'], mainRank:2, extraRank:1,
+    features:['Eager','Fair-spoken','Faithful','Honourable','Inquisitive','Keen-eyed','Merry','Rustic']
+  },
+  bree: {
+    name:'Men of Bree', sub:'Cheerful, independent, well-connected', standard:'Common', standardEs:'Común',
+    blessing:'BREE-BLOOD', blessingDesc:'Each Man of Bree in the Company increases the Fellowship Rating by 1.',
+    blessingDescEs:'Cada Hombre de Bree en la Compañía aumenta la Calificación de Hermandad en 1.',
+    attrSets:[{s:2,h:5,w:7},{s:3,h:4,w:7},{s:3,h:5,w:6},{s:4,h:4,w:6},{s:4,h:5,w:5},{s:2,h:6,w:6}],
+    endB:20, hopB:10, parB:10,
+    skills:{AWE:0,ENHEARTEN:2,PERSUADE:2,ATHLETICS:1,TRAVEL:1,STEALTH:1,AWARENESS:1,INSIGHT:2,SCAN:1,HUNTING:1,HEALING:0,EXPLORE:1,SONG:1,COURTESY:3,RIDDLE:2,CRAFT:2,BATTLE:0,LORE:0},
+    favChoices:['PERSUADE','INSIGHT'],
+    mainCombat:['Axes','Spears'], mainRank:2, extraRank:1,
+    features:['Cunning','Fair-spoken','Faithful','Generous','Inquisitive','Patient','Rustic','True-hearted']
+  },
+  rangers: {
+    name:'Rangers of the North', sub:'Dúnedain descendants, grim guardians', standard:'Frugal', standardEs:'Frugal',
+    blessing:'KINGS OF MEN', blessingDesc:'Add 1 point to one Attribute of your choice.',
+    blessingDescEs:'Añade 1 punto a un Atributo de tu elección.',
+    attrSets:[{s:7,h:5,w:2},{s:7,h:4,w:3},{s:6,h:5,w:3},{s:6,h:4,w:4},{s:5,h:5,w:4},{s:6,h:6,w:2}],
+    endB:20, hopB:6, parB:14,
+    skills:{AWE:1,ENHEARTEN:0,PERSUADE:0,ATHLETICS:2,TRAVEL:2,STEALTH:2,AWARENESS:2,INSIGHT:0,SCAN:1,HUNTING:2,HEALING:2,EXPLORE:2,SONG:0,COURTESY:0,RIDDLE:0,CRAFT:0,BATTLE:2,LORE:2},
+    favChoices:['HUNTING','EXPLORE'],
+    mainCombat:['Spears','Swords'], mainRank:2, extraRank:1,
+    features:['Bold','Honourable','Secretive','Stern','Subtle','Swift','Tall','True-hearted'],
+    special:'ALLEGIANCE OF THE DÚNEDAIN: During Fellowship Phase (not Yule) you recover maximum Hope equal to half your HEART score.'
+  }
+};
+
+var CALLINGS = {
+  captain:{
+    name:'Captain', favSkills:['BATTLE','ENHEARTEN','PERSUADE'],
+    feature:'LEADERSHIP', featureDesc:'You possess the ability to direct others to action.',
+    featureDescEs:'Posees la capacidad de dirigir a otros hacia la acción.',
+    shadow:'Lure of Power', shadowEs:'Atracción del Poder',
+    desc:'Rise and take the lead — guide others not through fear, but through trust.',
+    descEs:'Levántate y toma el liderazgo — guía a otros no por miedo, sino por confianza.'
+  },
+  champion:{
+    name:'Champion', favSkills:['ATHLETICS','AWE','HUNTING'],
+    feature:'ENEMY-LORE', featureDesc:'Knowledge of characteristics, habits, and weaknesses of a chosen enemy type (Evil Men, Orcs, Spiders, Trolls, Wargs, or Undead).',
+    featureDescEs:'Conocimiento de características, hábitos y debilidades de un tipo de enemigo elegido (Hombres Malvados, Orcos, Arañas, Trolls, Huargos o Muertos).',
+    shadow:'Curse of Vengeance', shadowEs:'Maldición de la Venganza',
+    desc:'Oppose the Shadow by strength of arms — the road leads straight to where foes prowl.',
+    descEs:'Oponte a la Sombra con la fuerza de las armas — el camino lleva directo donde acechan los enemigos.'
+  },
+  messenger:{
+    name:'Messenger', favSkills:['COURTESY','SONG','TRAVEL'],
+    feature:'FOLK-LORE', featureDesc:'Knowledge of the customs, beliefs, and stories of the various communities of the Free Peoples.',
+    featureDescEs:'Conocimiento de las costumbres, creencias e historias de las diversas comunidades de los Pueblos Libres.',
+    shadow:'Wandering-Madness', shadowEs:'Locura Errante',
+    desc:'Travel to distant lands, carrying tidings and warning people of coming danger.',
+    descEs:'Viaja a tierras lejanas, llevando noticias y advirtiendo a la gente del peligro que se acerca.'
+  },
+  scholar:{
+    name:'Scholar', favSkills:['CRAFT','LORE','RIDDLE'],
+    feature:'RHYMES OF LORE', featureDesc:'Short verses that help remember significant facts from ancient history which might otherwise be lost.',
+    featureDescEs:'Versos cortos que ayudan a recordar hechos significativos de la historia antigua que de otro modo se perderían.',
+    shadow:'Lure of Secrets', shadowEs:'Atracción de los Secretos',
+    desc:'Knowledge makes the wild world less threatening — a love of learning guides your every step.',
+    descEs:'El conocimiento hace que el mundo salvaje sea menos amenazante — el amor por el saber guía cada paso.'
+  },
+  treasurehunter:{
+    name:'Treasure Hunter', favSkills:['EXPLORE','SCAN','STEALTH'],
+    feature:'BURGLARY', featureDesc:'Pickpocketing, lock picking, and any shadowy way to get hold of possessions or access protected areas.',
+    featureDescEs:'Robo de bolsillos, ganzúas y cualquier forma sombría de hacerse con posesiones o acceder a áreas protegidas.',
+    shadow:'Dragon-Sickness', shadowEs:'Enfermedad del Dragón',
+    desc:'Seek to recover what is lost — even when it means braving unspeakable dangers.',
+    descEs:'Busca recuperar lo que se perdió — aunque signifique enfrentar peligros indescriptibles.'
+  },
+  warden:{
+    name:'Warden', favSkills:['AWARENESS','HEALING','INSIGHT'],
+    feature:'SHADOW-LORE', featureDesc:'You recognise the hidden thread unifying what is malicious, dark, and terrible in Middle-earth.',
+    featureDescEs:'Reconoces el hilo oculto que une lo malicioso, oscuro y terrible en la Tierra Media.',
+    shadow:'Path of Despair', shadowEs:'Senda de la Desesperación',
+    desc:'Defend all who cannot defend themselves, guarding their homes from what lurks outside.',
+    descEs:'Defiende a quienes no pueden defenderse, protegiendo sus hogares de lo que acecha afuera.'
+  }
+};
+
+function T(k){ return (STRINGS[lang]||STRINGS.en)[k]||k; }
+
+function setLang(l) {
+  lang = l;
+  document.querySelectorAll('.lang-btn').forEach(function(b){
+    b.classList.toggle('active', (l==='en'&&b.textContent==='English')||(l==='es'&&b.textContent==='Español'));
+  });
+  renderAll();
+}
+
+function renderAll() {
+  updateTexts();
+  renderProgress();
+  renderCultures();
+  if(state.culture) renderAttrSection();
+  renderCallings();
+  renderXP();
+  renderFeatures();
+  if(currentStep===5) renderSheet();
+}
+
+function updateTexts() {
+  var els = {
+    s1eyebrow:'s1ey',s1title:'s1t',s1sub:'s1s',
+    s2eyebrow:'s2ey',s2title:'s2t',s2sub:'s2s',
+    s3eyebrow:'s3ey',s3title:'s3t',s3sub:'s3s',
+    s4eyebrow:'s4ey',s4title:'s4t',s4sub:'s4s',
+    s5eyebrow:'s5ey',s5title:'s5t',s5sub:'s5s',
+    btnRestart:'restart'
+  };
+  Object.keys(els).forEach(function(id){
+    var el = document.getElementById(id);
+    if(el) el.textContent = T(els[id]);
+  });
+  var nl = document.getElementById('s4namelabel');
+  if(nl) nl.textContent = T('namelabel');
+  var fl = document.getElementById('s4featlabel');
+  if(fl) fl.textContent = T('featlabel');
+  var al = document.getElementById('s1attrlabel');
+  if(al) al.textContent = T('attrlabel');
+  var favl = document.getElementById('s1favlabel');
+  if(favl) favl.textContent = T('favlabel');
+  
+  // Update share buttons dynamically to keep icons
+  var btnWa = document.getElementById('btnWa');
+  if (btnWa) {
+    btnWa.innerHTML = '<svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z"/></svg> ' + T('shareWa');
+  }
+  var btnDi = document.getElementById('btnDi');
+  if (btnDi) {
+    btnDi.innerHTML = '<svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M13.545 2.907a13.227 13.227 0 0 0-3.257-1.011.05.05 0 0 0-.052.025c-.141.25-.297.577-.406.833a12.19 12.19 0 0 0-3.658 0 8.258 8.258 0 0 0-.412-.833.051.051 0 0 0-.052-.025c-1.125.194-2.22.534-3.257 1.011a.041.041 0 0 0-.021.018C.356 6.024-.213 9.047.066 12.032c.001.014.01.028.021.037a13.276 13.276 0 0 0 3.995 2.02.05.05 0 0 0 .056-.019c.308-.42.582-.863.818-1.329a.05.05 0 0 0-.01-.059.051.051 0 0 0-.018-.011 8.875 8.875 0 0 1-1.248-.595.05.05 0 0 1-.02-.066.051.051 0 0 1 .015-.019c.084-.063.168-.129.248-.195a.05.05 0 0 1 .051-.007c2.619 1.196 5.454 1.196 8.041 0a.052.052 0 0 1 .053.007c.08.066.164.132.248.195a.051.051 0 0 1-.004.085 8.254 8.254 0 0 1-1.249.594.05.05 0 0 0-.03.03.052.052 0 0 0 .003.041c.24.465.515.909.817 1.329a.05.05 0 0 0 .056.019 13.235 13.235 0 0 0 4.001-2.02.049.049 0 0 0 .021-.037c.334-3.451-.559-6.449-2.366-9.106a.034.034 0 0 0-.02-.019zM5.89 8.631c-.598 0-1.085-.51-1.085-1.14 0-.631.48-1.14 1.085-1.14s1.09.515 1.085 1.14c0 .631-.48 1.14-1.085 1.14zm4.22 0c-.598 0-1.085-.51-1.085-1.14 0-.631.48-1.14 1.085-1.14s1.09.515 1.085 1.14c0 .631-.48 1.14-1.085 1.14z"/></svg> ' + T('shareDi');
+  }
+}
+
+function renderProgress() {
+  var steps = T('steps');
+  var container = document.getElementById('progressTrack');
+  container.innerHTML = '';
+  for(var i=1;i<=5;i++){
+    var div = document.createElement('div');
+    div.className = 'progress-step'+(i<currentStep?' done':i===currentStep?' current':'');
+    div.innerHTML = '<div class="progress-dot">'+(i<currentStep?'✓':i)+'</div><div class="progress-label">'+(Array.isArray(steps)?steps[i-1]:'')+'</div>';
+    container.appendChild(div);
+  }
+}
+
+function renderCultures() {
+  var g = document.getElementById('cultureGrid');
+  g.innerHTML = '';
+  Object.keys(CULTURES).forEach(function(k){
+    var c = CULTURES[k];
+    var d = document.createElement('div');
+    d.className='culture-card'+(state.culture===k?' selected':'');
+    d.onclick=function(){ selectCulture(k); };
+    d.innerHTML='<div class="card-check">✓</div><div class="card-name">'+c.name+'</div><div class="card-sub">'+c.sub+'</div><span class="card-tag">'+(lang==='es'?c.standardEs:c.standard)+'</span>';
+    g.appendChild(d);
+  });
+}
+
+function selectCulture(k) {
+  state.culture=k; state.attrRow=null; state.favouredSkill=null;
+  state.xpSkills={}; state.xpCombat={};
+  document.getElementById('btn1next').disabled=true;
+  renderCultures();
+  renderAttrSection();
+}
+
+function renderAttrSection() {
+  var sec = document.getElementById('attrSection');
+  sec.style.display = 'block';
+  var c = CULTURES[state.culture];
+  var tbl = document.getElementById('attrTable');
+  tbl.innerHTML='<tr><th>'+T('roll')+'</th><th>'+T('strength')+'</th><th>'+T('heart')+'</th><th>'+T('wits')+'</th></tr>';
+  c.attrSets.forEach(function(row,i){
+    var tr=document.createElement('tr');
+    tr.className=state.attrRow===i?'selected-row':'';
+    tr.onclick=function(){ state.attrRow=i; renderAttrSection(); checkStep1(); };
+    tr.innerHTML='<td>'+(i+1)+'</td><td><span class="attr-val">'+row.s+'</span></td><td><span class="attr-val">'+row.h+'</span></td><td><span class="attr-val">'+row.w+'</span></td>';
+    tbl.appendChild(tr);
+  });
+  renderFavChooser();
+  renderDerived();
+  renderBlessingBox();
+}
+
+function renderFavChooser() {
+  var c=CULTURES[state.culture];
+  var opts=document.getElementById('favouredOptions');
+  opts.innerHTML='';
+  c.favChoices.forEach(function(sk){
+    var btn=document.createElement('button');
+    btn.className='fav-btn'+(state.favouredSkill===sk?' selected':'');
+    btn.textContent=sk;
+    btn.onclick=function(){ state.favouredSkill=sk; renderFavChooser(); checkStep1(); };
+    opts.appendChild(btn);
+  });
+}
+
+function renderDerived() {
+  var row=document.getElementById('derivedRow');
+  if(state.attrRow===null){ row.innerHTML=''; return; }
+  var c=CULTURES[state.culture];
+  var a=c.attrSets[state.attrRow];
+  var end=a.s+c.endB, hop=a.h+c.hopB, par=a.w+c.parB;
+  row.innerHTML=
+    '<div class="derived-card"><div class="derived-label">'+T('endurance')+'</div><div class="derived-value">'+end+'</div><div class="derived-formula">STR + '+c.endB+'</div></div>'+
+    '<div class="derived-card"><div class="derived-label">'+T('hope')+'</div><div class="derived-value">'+hop+'</div><div class="derived-formula">HRT + '+c.hopB+'</div></div>'+
+    '<div class="derived-card"><div class="derived-label">'+T('parry')+'</div><div class="derived-value">'+par+'</div><div class="derived-formula">WTS + '+c.parB+'</div></div>'+
+    '<div class="derived-card"><div class="derived-label">'+T('valour')+'</div><div class="derived-value">1</div><div class="derived-formula">Starting</div></div>'+
+    '<div class="derived-card"><div class="derived-label">'+T('wisdom')+'</div><div class="derived-value">1</div><div class="derived-formula">Starting</div></div>';
+}
+
+function renderBlessingBox() {
+  var box=document.getElementById('blessingBox');
+  if(!state.culture){ box.innerHTML=''; return; }
+  var c=CULTURES[state.culture];
+  var desc=lang==='es'?c.blessingDescEs:c.blessingDesc;
+  var extra=c.special?('<br><br><em style="color:rgba(247,240,220,0.45);font-size:13px">'+c.special+'</em>'):'';
+  box.innerHTML='<div class="blessing-box"><div class="blessing-title">'+T('blessing')+': '+c.blessing+'</div><div class="blessing-desc">'+desc+extra+'</div></div>';
+}
+
+function checkStep1() {
+  document.getElementById('btn1next').disabled=!(state.culture&&state.attrRow!==null&&state.favouredSkill);
+}
+
+function renderCallings() {
+  var g=document.getElementById('callingGrid');
+  g.innerHTML='';
+  Object.keys(CALLINGS).forEach(function(k){
+    var cl=CALLINGS[k];
+    var d=document.createElement('div');
+    d.className='calling-card'+(state.calling===k?' selected':'');
+    d.onclick=function(){ selectCalling(k); };
+    d.innerHTML='<div class="calling-name">'+cl.name+'</div>'+
+      '<div class="calling-favs">'+T('favoured')+' · '+cl.favSkills.join(' · ')+'</div>'+
+      '<div class="calling-shadow-row"><span class="calling-shadow-label">'+T('shadowPath')+': </span>'+(lang==='es'?cl.shadowEs:cl.shadow)+'</div>'+
+      (state.calling===k?'<div id="cfSection" style="margin-top:0.75rem"></div>':'');
+    g.appendChild(d);
+    if(state.calling===k) renderCallingFavs();
+  });
+}
+
+function selectCalling(k) {
+  state.calling=k; state.callingFavs=[];
+  document.getElementById('btn2next').disabled=true;
+  renderCallings();
+}
+
+function renderCallingFavs() {
+  var sec=document.getElementById('cfSection');
+  if(!sec) return;
+  var cl=CALLINGS[state.calling];
+  sec.innerHTML='<div class="calling-fav-section"><div class="cf-label">'+T('chooseCallingFavs')+'</div><div class="cf-options" id="cfOptions"></div></div>';
+  var opts=document.getElementById('cfOptions');
+  cl.favSkills.forEach(function(sk){
+    var btn=document.createElement('button');
+    btn.className='cf-btn'+(state.callingFavs.indexOf(sk)>=0?' selected':'');
+    btn.textContent=sk;
+    btn.onclick=function(){
+      var idx=state.callingFavs.indexOf(sk);
+      if(idx>=0){ state.callingFavs.splice(idx,1); }
+      else if(state.callingFavs.length<2){ state.callingFavs.push(sk); }
+      renderCallingFavs();
+      document.getElementById('btn2next').disabled=state.callingFavs.length<2;
+    };
+    opts.appendChild(btn);
+  });
+}
+
+function getBaseSkill(sk) {
+  if(!state.culture) return 0;
+  return CULTURES[state.culture].skills[sk]||0;
+}
+
+function getSkillRank(sk) {
+  return getBaseSkill(sk)+(state.xpSkills[sk]||0);
+}
+
+// BUGFIX: Allow both primary (Rank 2) and secondary (Rank 1) weapon skills correctly
+function getCombatBase(cp) {
+  if(!state.culture) return 0;
+  var c=CULTURES[state.culture];
+  if (cp === c.mainCombat[0]) return c.mainRank;
+  if (cp === c.mainCombat[1]) return c.extraRank;
+  return 0;
+}
+
+function getCombatRank(cp) { return getCombatBase(cp)+(state.xpCombat[cp]||0); }
+
+function getAllFavSkills() {
+  var favs=[];
+  if(state.favouredSkill) favs.push(state.favouredSkill);
+  state.callingFavs.forEach(function(s){ if(favs.indexOf(s)<0) favs.push(s); });
+  return favs;
+}
+
+function xpSpent() {
+  var t=0;
+  Object.keys(state.xpSkills).forEach(function(sk){
+    var base=getBaseSkill(sk);
+    for(var i=0;i<state.xpSkills[sk];i++){
+      var lvl=base+i+1;
+      t+=(lvl<=1?1:lvl<=2?2:lvl<=3?3:5);
+    }
+  });
+  Object.keys(state.xpCombat).forEach(function(cp){
+    var base=getCombatBase(cp);
+    for(var i=0;i<state.xpCombat[cp];i++){
+      var lvl=base+i+1;
+      t+=(lvl<=1?2:lvl<=2?4:6);
+    }
+  });
+  return t;
+}
+
+function renderXP() {
+  if(!state.culture) return;
+  var sec=document.getElementById('xpSection');
+  var left=10-xpSpent();
+  var skillNames=Object.keys(CULTURES[state.culture].skills);
+  var combatTypes=['Axes','Bows','Spears','Swords'];
+  sec.innerHTML=
+    '<div class="xp-header-row"><div class="xp-pool-label">'+T('xpLeft')+'</div><div class="xp-left">'+left+'<span style="font-size:14px;color:var(--gold-dark)"> / 10</span></div></div>'+
+    '<div class="xp-tabs">'+
+      '<button class="xp-tab'+(currentXPTab==='skills'?' active':'')+'\" onclick="switchXPTab(\'skills\')">'+T('skills')+'</button>'+
+      '<button class="xp-tab'+(currentXPTab==='combat'?' active':'')+'\" onclick="switchXPTab(\'combat\')">'+T('combat')+'</button>'+
+    '</div>'+
+    '<div id="xpSkillsList" style="display:'+(currentXPTab==='skills'?'block':'none')+'"></div>'+
+    '<div id="xpCombatList" style="display:'+(currentXPTab==='combat'?'block':'none')+'"></div>';
+
+  var sl=document.getElementById('xpSkillsList');
+  var favs=getAllFavSkills();
+  skillNames.forEach(function(sk){
+    var cur=getSkillRank(sk);
+    var isFav=favs.indexOf(sk)>=0;
+    var left2=10-xpSpent();
+    var nextCost=cur+1<=1?1:cur+1<=2?2:cur+1<=3?3:5;
+    var row=document.createElement('div');
+    row.className='xp-skill-row';
+    row.innerHTML='<div class="xp-skill-name'+(isFav?' is-fav':'')+'">'+sk+(isFav?' ★':'')+'</div>'+
+      '<div class="rank-btns">'+
+      '<button class="rank-btn" onclick="changeSkill(\''+sk+'\',-1)" '+(cur<=getBaseSkill(sk)?'disabled':'')+'>−</button>'+
+      '<span class="rank-display">'+cur+'</span>'+
+      '<button class="rank-btn" onclick="changeSkill(\''+sk+'\',1)" '+(cur>=4||left2<nextCost?'disabled':'')+'>+</button>'+
+      '</div>';
+    sl.appendChild(row);
+  });
+
+  var cl2=document.getElementById('xpCombatList');
+  combatTypes.forEach(function(cp){
+    var base=getCombatBase(cp);
+    var cur=getCombatRank(cp);
+    var left2=10-xpSpent();
+    var nextCost=cur+1<=1?2:cur+1<=2?4:6;
+    var row=document.createElement('div');
+    row.className='xp-skill-row';
+    row.innerHTML='<div class="xp-skill-name">'+cp+(base>0?' (Base '+base+')':'')+'</div>'+
+      '<div class="rank-btns">'+
+      '<button class="rank-btn" onclick="changeCombat(\''+cp+'\',-1)" '+(cur<=base?'disabled':'')+'>−</button>'+
+      '<span class="rank-display">'+cur+'</span>'+
+      '<button class="rank-btn" onclick="changeCombat(\''+cp+'\',1)" '+(cur>=3||left2<nextCost?'disabled':'')+'>+</button>'+
+      '</div>';
+    cl2.appendChild(row);
+  });
+}
+
+function switchXPTab(tab) {
+  currentXPTab=tab;
+  renderXP();
+}
+
+function changeSkill(sk,d) {
+  var left=10-xpSpent();
+  var cur=getSkillRank(sk);
+  var base=getBaseSkill(sk);
+  if(d>0){
+    var cost=cur+1<=1?1:cur+1<=2?2:cur+1<=3?3:5;
+    if(left>=cost&&cur<4){ state.xpSkills[sk]=(state.xpSkills[sk]||0)+1; }
+  } else {
+    if((state.xpSkills[sk]||0)>0) state.xpSkills[sk]--;
+  }
+  renderXP();
+}
+
+function changeCombat(cp,d) {
+  var left=10-xpSpent();
+  var base=getCombatBase(cp);
+  var cur=getCombatRank(cp);
+  if(d>0){
+    var cost=cur+1<=1?2:cur+1<=2?4:6;
+    if(left>=cost&&cur<3){ state.xpCombat[cp]=(state.xpCombat[cp]||0)+1; }
+  } else {
+    if((state.xpCombat[cp]||0)>0) state.xpCombat[cp]--;
+  }
+  renderXP();
+}
+
+function renderFeatures() {
+  if(!state.culture) return;
+  var c=CULTURES[state.culture];
+  var cl=state.calling?CALLINGS[state.calling]:null;
+  var cont=document.getElementById('featurePills');
+  cont.innerHTML='';
+  c.features.forEach(function(f){
+    var btn=document.createElement('button');
+    btn.className='feature-pill'+(state.features.indexOf(f)>=0?' selected':'');
+    btn.textContent=f;
+    btn.onclick=function(){
+      var idx=state.features.indexOf(f);
+      if(idx>=0){ state.features.splice(idx,1); }
+      else if(state.features.length<2){ state.features.push(f); }
+      renderFeatures(); checkStep4();
+    };
+    cont.appendChild(btn);
+  });
+  if(cl){
+    var span=document.createElement('span');
+    span.className='feature-pill calling-feature';
+    // BUGFIX: Proper Spanish translation for Calling tag
+    var tagText = lang === 'es' ? ' (Vocación)' : ' (Calling)';
+    span.textContent=(lang==='es'?cl.feature:cl.feature)+tagText;
+    cont.appendChild(span);
+  }
+}
+
+function onNameInput() {
+  state.heroName=document.getElementById('heroNameInput').value.trim();
+  checkStep4();
+}
+
+function checkStep4() {
+  document.getElementById('btn4next').disabled=!(state.heroName&&state.features.length>=2);
+}
+
+function renderSheet() {
+  if(!state.culture||!state.calling||state.attrRow===null) return;
+  var c=CULTURES[state.culture];
+  var cl=CALLINGS[state.calling];
+  var a=c.attrSets[state.attrRow];
+  var end=a.s+c.endB, hop=a.h+c.hopB, par=a.w+c.parB;
+  var favs=getAllFavSkills();
+  var skillNames=Object.keys(c.skills);
+  var combatTypes=['Axes','Bows','Spears','Swords'];
+
+  var skillsHtml='<div class="sheet-skills-grid">';
+  skillNames.forEach(function(sk){
+    var rank=getSkillRank(sk);
+    var isFav=favs.indexOf(sk)>=0;
+    skillsHtml+='<div class="ss-row'+(isFav?' fav':'')+'"><span class="ss-name">'+sk+(isFav?' ★':'')+'</span><span class="ss-val">'+rank+'</span></div>';
+  });
+  skillsHtml+='</div>';
+
+  var combatHtml='<div class="combat-row">';
+  combatTypes.forEach(function(cp){
+    var total=getCombatRank(cp);
+    if(total>0) combatHtml+='<div class="combat-pill">'+cp+' <span>'+total+'</span></div>';
+  });
+  combatHtml+='</div>';
+
+  var featHtml='<div class="sheet-features">';
+  state.features.forEach(function(f){ featHtml+='<span class="sh-feature">'+f+'</span>'; });
+  
+  // BUGFIX: Proper Spanish translation for Calling tag
+  var tagText = lang === 'es' ? ' (Vocación)' : ' (Calling)';
+  featHtml+='<span class="sh-feature calling-feat">'+(lang==='es'?cl.feature:cl.feature)+tagText+'</span>';
+  featHtml+='</div>';
+
+  var blessDesc=lang==='es'?c.blessingDescEs:c.blessingDesc;
+  var featDesc=lang==='es'?cl.featureDescEs:cl.featureDesc;
+  var shText=lang==='es'?cl.shadowEs:cl.shadow;
+
+  document.getElementById('characterSheet').innerHTML=
+    '<div class="sheet-wrapper">'+
+      '<div class="sheet-hero-header">'+
+        '<div class="sheet-hero-name">'+state.heroName+'</div>'+
+        '<div class="sheet-hero-sub">'+c.name+' · '+cl.name+'</div>'+
+        '<div class="sheet-valour-wisdom">'+
+          '<div class="vw-badge"><div class="vw-label">'+T('valour')+'</div><div class="vw-val">1</div></div>'+
+          '<div class="vw-badge"><div class="vw-label">'+T('wisdom')+'</div><div class="vw-val">1</div></div>'+
+        '</div>'+
+      '</div>'+
+      '<div class="sheet-body">'+
+        '<div class="sheet-section">'+
+          '<div class="sheet-section-title">'+T('attrs')+'</div>'+
+          '<div class="attr-trio">'+
+            '<div class="attr-block"><div class="ab-label">'+T('strength')+'</div><div class="ab-val">'+a.s+'</div><div class="ab-tn">'+T('tn')+' '+(20-a.s)+'</div></div>'+
+            '<div class="attr-block"><div class="ab-label">'+T('heart')+'</div><div class="ab-val">'+a.h+'</div><div class="ab-tn">'+T('tn')+' '+(20-a.h)+'</div></div>'+
+            '<div class="attr-block"><div class="ab-label">'+T('wits')+'</div><div class="ab-val">'+a.w+'</div><div class="ab-tn">'+T('tn')+' '+(20-a.w)+'</div></div>'+
+          '</div>'+
+        '</div>'+
+        '<div class="sheet-section">'+
+          '<div class="sheet-section-title">'+T('derived')+'</div>'+
+          '<div class="derived-trio">'+
+            '<div class="der-block"><div class="db-label">'+T('endurance')+'</div><div class="db-val">'+end+'</div></div>'+
+            '<div class="der-block"><div class="db-label">'+T('hope')+'</div><div class="db-val">'+hop+'</div></div>'+
+            '<div class="der-block"><div class="db-label">'+T('parry')+'</div><div class="db-val">'+par+'</div></div>'+
+          '</div>'+
+        '</div>'+
+        '<div class="sheet-section">'+
+          '<div class="sheet-section-title">'+T('blessing')+'</div>'+
+          '<div class="sh-blessing"><strong>'+c.blessing+'</strong>'+blessDesc+'</div>'+
+        '</div>'+
+        '<div class="sheet-section">'+
+          '<div class="sheet-section-title">'+T('skills')+'</div>'+skillsHtml+
+        '</div>'+
+        '<div class="sheet-section">'+
+          '<div class="sheet-section-title">'+T('combat')+'</div>'+combatHtml+
+        '</div>'+
+        '<div class="sheet-section">'+
+          '<div class="sheet-section-title">'+T('features')+'</div>'+featHtml+
+        '</div>'+
+        '<div class="sheet-section">'+
+          '<div class="sheet-section-title">'+T('calling')+' — '+cl.name+'</div>'+
+          '<div class="sh-blessing" style="margin-bottom:10px"><strong>'+cl.feature+'</strong>'+featDesc+'</div>'+
+          '<div class="sh-shadow"><strong>'+T('shadowPath')+': '+shText+'</strong>'+(lang==='es'?cl.descEs:cl.desc)+'</div>'+
+        '</div>'+
+      '</div>'+
+    '</div>';
+}
+
+function goStep(n) {
+  if(n===4) { renderFeatures(); }
+  if(n===5) { state.heroName=document.getElementById('heroNameInput').value.trim(); renderSheet(); }
+  document.querySelectorAll('.step').forEach(function(s){ s.classList.remove('active'); });
+  document.getElementById('step'+n).classList.add('active');
+  currentStep=n;
+  renderProgress();
+  window.scrollTo(0,0);
+}
+
+function restart() {
+  state={culture:null,attrRow:null,favouredSkill:null,calling:null,callingFavs:[],xpSkills:{},xpCombat:{},heroName:'',features:[]};
+  var ni=document.getElementById('heroNameInput');
+  if(ni) ni.value='';
+  document.getElementById('attrSection').style.display='none';
+  document.getElementById('btn1next').disabled=true;
+  document.getElementById('btn2next').disabled=true;
+  document.getElementById('btn4next').disabled=true;
+  goStep(1);
+  renderAll();
+}
+
+// SHARING LOGIC
+function generateShareText() {
+  if(!state.culture||!state.calling||state.attrRow===null) return "";
+  var c=CULTURES[state.culture];
+  var cl=CALLINGS[state.calling];
+  var a=c.attrSets[state.attrRow];
+  var end=a.s+c.endB, hop=a.h+c.hopB, par=a.w+c.parB;
+  var favs=getAllFavSkills();
+
+  var text = "🛡️ **" + state.heroName + "** 🛡️\n";
+  text += c.name + " · " + cl.name + "\n";
+  text += "STR: " + a.s + " | HRT: " + a.h + " | WIT: " + a.w + "\n";
+  text += "END: " + end + " | HOP: " + hop + " | PAR: " + par + "\n";
+  text += "Valour: 1 | Wisdom: 1\n\n";
+
+  text += "✨ *Skills*\n";
+  var rankedSkills = [];
+  Object.keys(c.skills).forEach(function(sk){
+    var rank = getSkillRank(sk);
+    var isFav = favs.indexOf(sk) >= 0;
+    if (rank > 0 || isFav) {
+      rankedSkills.push(sk + (isFav ? "★" : "") + " " + rank);
+    }
+  });
+  text += rankedSkills.join(" · ") + "\n\n";
+
+  text += "⚔️ *Combat Proficiencies*\n";
+  var combatTypes = ['Axes','Bows','Spears','Swords'];
+  var combatList = [];
+  combatTypes.forEach(function(cp){
+    var r = getCombatRank(cp);
+    if (r > 0) combatList.push(cp + " " + r);
+  });
+  text += combatList.join(" · ") + "\n\n";
+  text += "🎭 *Features*\n" + state.features.join(", ") + ", " + cl.feature + " (Calling)\n";
+
+  return text;
+}
+
+function shareWa() {
+  var text = encodeURIComponent(generateShareText());
+  window.open('https://wa.me/?text=' + text, '_blank');
+}
+
+function shareDi() {
+  var text = generateShareText();
+  navigator.clipboard.writeText(text).then(function() {
+    alert(T('copied'));
+  }).catch(function(err) {
+    console.error('Could not copy text: ', err);
+  });
+}
+
+renderAll();
+</script>
+</body>
+</html>
